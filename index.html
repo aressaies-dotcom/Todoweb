@@ -213,6 +213,21 @@ h1{font-size:22px;margin:0;letter-spacing:-.01em}
 .field{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:11px 12px;font-size:16px;outline:none;margin:6px 0}
 .field:focus{border-color:var(--accent)}
 .errtxt{color:var(--red);font-size:13px;min-height:18px;margin:4px 0 8px}
+.acts{display:flex;align-items:flex-start}
+.task .bell{font-size:14px}
+.task .bell.sent{width:auto;padding:0 7px;border-radius:13px;color:var(--accent);font-weight:700}
+.occ{display:flex;align-items:center;gap:12px;padding:9px 10px;margin:6px 0;border:1px solid var(--line);border-radius:12px;font-size:15px;cursor:pointer}
+.occ input{width:22px;height:22px;margin:0;flex:none;accent-color:var(--accent)}
+.occ small{display:block;color:var(--muted);font-size:12px}
+.occ.off{opacity:.5;cursor:default}
+.lbl{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+.lbl .field{margin:4px 0 0}
+.rec{margin-top:12px;font-size:14px}
+.rec summary{cursor:pointer;font-weight:600}
+.rec ol{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+.rec li{margin:4px 0}
+.diag{font-size:13px;color:var(--muted);margin:6px 0 10px}
+.diag div{padding:1px 0}
 .sr{position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0;padding:0}
 
 @media (max-width:760px){
@@ -391,6 +406,51 @@ h1{font-size:22px;margin:0;letter-spacing:-.01em}
   </div>
 </div>
 
+<div id="belModal" class="overlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Rappel iPhone">
+    <div class="sheet-head"><strong>🔔 Rappel iPhone</strong><button class="mini" id="belClose" type="button" aria-label="Fermer">✕</button></div>
+    <p id="belTitle" style="color:var(--text);font-weight:600;margin-top:0"></p>
+    <label class="lbl">Échéance<input class="field" id="belDate" type="date"></label>
+    <label class="lbl">Heure du rappel<input class="field" id="belTime" type="time" value="09:00"></label>
+    <div class="lbl" style="margin-top:14px">Quand te prévenir (une ou plusieurs)</div>
+    <div id="belOcc"></div>
+    <button class="btn primary" id="belGo" type="button" style="width:100%;margin-top:10px">🔔 Créer le rappel</button>
+    <p style="font-size:12px">Chaque rappel est créé dans l'app Rappels avec une alerte, une priorité haute et un drapeau. Le son et la vibration dépendent des réglages de ton iPhone.</p>
+    <button class="link" id="belSettings" type="button">⚙ Réglages du raccourci (nom, recette, son et vibration)</button>
+  </div>
+</div>
+
+<div id="remModal" class="overlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Réglages des rappels iPhone">
+    <div class="sheet-head"><strong>Rappels iPhone</strong><button class="mini" id="remClose" type="button" aria-label="Fermer">✕</button></div>
+    <p>La cloche 🔔 de chaque tâche crée des rappels dans l'app <b>Rappels</b> via l'app <b>Raccourcis</b> : l'iPhone bascule brièvement vers elle, puis tu reviens ici.</p>
+    <label class="lbl">Nom du raccourci
+      <input class="field" id="remName" type="text" value="Ajouter rappel" maxlength="60"></label>
+    <div class="btnrow"><button class="btn" id="remTest" type="button">Envoyer un rappel test (dans 2 min)</button></div>
+    <details class="rec"><summary>Créer le raccourci (une seule fois)</summary>
+      <ol>
+        <li>Ouvre l'app <b>Raccourcis</b>, touche <b>+</b>, puis nomme le raccourci exactement comme ci-dessus.</li>
+        <li><b>Diviser le texte</b> : texte = <i>Entrée du raccourci</i>, séparateur = <i>Nouvelles lignes</i>.</li>
+        <li><b>Obtenir l'élément de la liste</b> → <i>Premier élément</i> (le titre).</li>
+        <li><b>Obtenir l'élément de la liste</b> → <i>Dernier élément</i> (les dates).</li>
+        <li><b>Diviser le texte</b> sur ce dernier élément : séparateur = <i>Personnalisé</i>, avec une virgule « , ».</li>
+        <li><b>Répéter avec chaque élément</b> (la liste de l'étape précédente).</li>
+        <li>Dans la boucle : <b>Obtenir les dates à partir de l'entrée</b> (<i>Élément répété</i>), puis <b>Ajouter un nouveau rappel</b> : titre = le premier élément, <b>alerte</b> = la date obtenue, <b>priorité</b> = Élevée, <b>drapeau</b> activé.</li>
+        <li>Fin de la boucle. <i>(Facultatif)</i> ajoute ensuite <b>Ouvrir l'app</b> → <b>Rappels</b>, pour que l'app Rappels s'affiche après la création.</li>
+        <li>Touche <b>OK</b>, puis teste avec le bouton ci-dessus.</li>
+      </ol>
+    </details>
+    <details class="rec"><summary>Son et vibration</summary>
+      <ol>
+        <li>Réglages iPhone → <b>Notifications</b> → <b>Rappels</b> : active <b>Autoriser les notifications</b>, <b>Sons</b>, et choisis le style <b>Bannières permanentes</b>.</li>
+        <li>Vérifie que le mode silencieux et les modes de concentration n'étouffent pas Rappels.</li>
+        <li>Sous iOS 26.2, un rappel peut avoir l'option <b>Urgent</b> (alarme sonore, même en Concentration). Regarde si l'action « Ajouter un nouveau rappel » la propose et active-la ; sinon, active-la à la main dans le rappel.</li>
+      </ol>
+    </details>
+    <p style="font-size:12px">Le son et la vibration sont décidés par iOS : la page web ne peut pas les forcer. Un rappel déjà créé n'est pas mis à jour si tu changes l'échéance ensuite.</p>
+  </div>
+</div>
+
 <div id="profileModal" class="overlay" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-label="Profils">
     <div class="sheet-head"><strong>Profils</strong><button class="mini" id="pClose" type="button" aria-label="Fermer">✕</button></div>
@@ -419,6 +479,7 @@ h1{font-size:22px;margin:0;letter-spacing:-.01em}
     <div id="lIn" hidden>
       <p>Tu es connecté : tes tâches et tes notes sont synchronisées avec les autres appareils.</p>
       <p>Se déconnecter efface les données de cet appareil (elles restent enregistrées en ligne).</p>
+      <div id="lDiag" class="diag" aria-live="polite"></div>
       <div class="btnrow"><button class="btn" id="lSignOut" type="button">Se déconnecter</button></div>
     </div>
   </div>
@@ -458,6 +519,7 @@ var lastToday='';
 var cloud={ad:null,signedIn:false,mode:'off',loginShown:false};   // mode : off | init | out | in | error
 var stores=[];
 var profiles=[], activeId='main';
+var remPrefs={time:'09:00',occ:['0','1'],name:'Ajouter rappel'}, RKEY='todo-notes-reminders-v1', SKEY='todo-notes-remsent-v1', remSent={}, bel={task:null,sel:{}};
 
 /* ---------- Utilitaires ---------- */
 function h(tag,props){
@@ -574,7 +636,7 @@ function copyToClipboard(txt,msg){
    SYNCHRONISATION : un « store » par collection (tâches, notes)
    ===================================================================== */
 function makeStore(cfg){
-  var S={sync:{sig:{},synced:{},pendingDel:{}},dirty:{},first:true,unsub:null,pushTimer:0,pushing:false,st:'idle'};
+  var S={sync:{sig:{},synced:{},pendingDel:{}},dirty:{},first:true,unsub:null,pushTimer:0,pushing:false,st:'idle',err:'',retry:0,name:cfg.name};
   S.isEmpty=function(x){return !!(cfg.empty&&cfg.empty(x));};
   S.loadSync=function(){
     try{ var raw=localStorage.getItem(cfg.syncKey);
@@ -630,10 +692,11 @@ function makeStore(cfg){
     p.then(function(){
       sets.forEach(function(id){ sy.synced[id]=1; if(!cfg.get(id)) sy.pendingDel[id]=1; });
       dels.forEach(function(id){ delete sy.pendingDel[id]; delete sy.synced[id]; });
-      S.persistSync(); S.pushing=false; S.st='ok'; renderSync();
+      S.persistSync(); S.pushing=false; S.st='ok'; S.err=''; renderSync();
       if(Object.keys(S.dirty).length||Object.keys(sy.pendingDel).length) S.schedulePush();
-    }).catch(function(){
+    }).catch(function(e){
       sets.forEach(function(id){ S.dirty[id]=1; });
+      S.err=(e&&(e.code||e.message))||'erreur';
       S.pushing=false; S.st=navigator.onLine===false?'offline':'error'; renderSync();
       clearTimeout(S.pushTimer); S.pushTimer=setTimeout(S.flush,5000);
     });
@@ -667,7 +730,7 @@ function makeStore(cfg){
     S.persistSync();
   };
   S.onRemote=function(ev){
-    var sy=S.sync;
+    var sy=S.sync; S.err='';
     if(S.first){
       if(ev.fromCache){ S.st='offline'; renderSync(); return; }   // on attend la réponse du serveur avant de comparer
       S.detect();
@@ -704,11 +767,16 @@ function makeStore(cfg){
   S.start=function(){
     if(S.unsub) return;
     S.first=true; S.st='wait';
-    S.unsub=cloud.ad.subscribe(cfg.name,S.onRemote,function(){ S.st=navigator.onLine===false?'offline':'error'; renderSync(); });
+    S.unsub=cloud.ad.subscribe(cfg.name,S.onRemote,function(e){
+      S.err=(e&&(e.code||e.message))||'erreur';
+      S.st=navigator.onLine===false?'offline':'error'; renderSync();
+      clearTimeout(S.retry);                                   // nouvel essai automatique (règles corrigées entre-temps)
+      S.retry=setTimeout(function(){ if(cloud.ad&&cloud.signedIn&&S.st==='error'){ S.stop(); S.start(); } },20000);
+    });
   };
   S.stop=function(){
     if(S.unsub){ try{S.unsub();}catch(e){} S.unsub=null; }
-    S.first=true; S.st='idle';
+    clearTimeout(S.retry); S.first=true; S.st='idle';
   };
   return S;
 }
@@ -722,9 +790,24 @@ function syncState(){
   if(sts.indexOf('wait')>=0||sts.indexOf('syncing')>=0) return 'syncing';
   return 'ok';
 }
+var LABELS={profiles:'Profils',tasks:'Tâches',notes:'Notes'};
+function renderDiag(){
+  var box=$('#lDiag'); if(!box) return;
+  box.textContent='';
+  if(cloud.mode!=='in'||$('#loginModal').hidden) return;
+  var bad=false;
+  stores.forEach(function(s){
+    var t={ok:'✓ synchronisé',syncing:'… en cours',wait:'… en cours',offline:'hors ligne',error:'⚠ erreur'}[s.st]||s.st;
+    var line=(LABELS[s.name]||s.name)+' : '+t+(s.st==='error'&&s.err?' ('+s.err+')':'');
+    if(s.st==='error') bad=true;
+    box.appendChild(h('div',{text:line}));
+    if(s.st==='error'&&/permission/.test(s.err||'')) box.appendChild(h('div',{class:'errtxt',text:'Accès refusé : dans Firebase > Firestore > Règles, autorise la collection « '+s.name+' » puis publie.'}));
+  });
+  if(bad&&!stores.some(function(s){return /permission/.test(s.err||'');})) box.appendChild(h('div',{class:'errtxt',text:'Nouvel essai automatique dans quelques secondes.'}));
+}
 function renderSync(){
   var b=$('#btnSync'), st=syncState();
-  refreshSaveState();
+  refreshSaveState(); renderDiag();
   if(st==='off'){ b.hidden=true; return; }
   b.hidden=false;
   b.textContent={init:'☁ …',out:'☁ Se connecter',syncing:'☁ Synchronisation…',ok:'☁ Synchronisé',offline:'☁ Hors ligne',error:'⚠ Synchro en erreur'}[st]||'☁';
@@ -742,7 +825,7 @@ function openLogin(){
   var inSt=cloud.signedIn;
   $('#lOut').hidden=inSt; $('#lIn').hidden=!inSt; $('#lErr').textContent='';
   $('#lUser').value=SHARED_EMAIL;
-  $('#loginModal').hidden=false;
+  $('#loginModal').hidden=false; renderDiag();
   if(!inSt) setTimeout(function(){$('#lPwd').focus();},60);
 }
 function closeLogin(){ $('#loginModal').hidden=true; $('#lPwd').value=''; }
@@ -796,6 +879,82 @@ async function cloudStart(){
       if(!cloud.loginShown){ cloud.loginShown=true; openLogin(); }
     }
   });
+}
+
+/* =====================================================================
+   RAPPELS iPHONE (via l'app Raccourcis)
+   ===================================================================== */
+function loadRem(){
+  try{ var o=JSON.parse(localStorage.getItem(RKEY)||'null');
+    if(o){ if(/^\d{2}:\d{2}$/.test(o.time)) remPrefs.time=o.time; if(Array.isArray(o.occ)) remPrefs.occ=o.occ.map(String); if(o.name) remPrefs.name=String(o.name); } }catch(e){}
+  try{ var r=JSON.parse(localStorage.getItem(SKEY)||'null'); if(r&&typeof r==='object') remSent=r; }catch(e){}
+}
+function saveRem(){ try{ localStorage.setItem(RKEY,JSON.stringify(remPrefs)); }catch(e){} }
+function saveSent(){ try{ localStorage.setItem(SKEY,JSON.stringify(remSent)); }catch(e){} }
+var OCC=[[0,'Le jour J'],[1,'J-1 (la veille)'],[2,'J-2'],[3,'J-3'],[7,'J-7 (une semaine avant)']];
+function alertAt(deadline,k,time){
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(deadline||''); if(!m) return null;
+  var hm=(time||'09:00').split(':');
+  return new Date(+m[1],+m[2]-1,+m[3]-k,+hm[0],+hm[1]);
+}
+function fmtAlert(d){ return ymd(d)+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+/* texte envoyé au raccourci : ligne 1 = titre, ligne 2 = dates « AAAA-MM-JJ HH:MM » séparées par des virgules */
+function reminderUrl(title,dates){
+  var text=String(title).replace(/[\r\n]+/g,' ').trim()+'\n'+dates.join(',');
+  return 'shortcuts://run-shortcut?name='+encodeURIComponent(remPrefs.name||'Ajouter rappel')+'&input=text&text='+encodeURIComponent(text);
+}
+function openUrl(url){
+  if(typeof window.__OPEN_URL__==='function'){ window.__OPEN_URL__(url); return; }
+  window.location.href=url;
+}
+function sendReminder(title,dates){
+  try{ todoStore.flush(); }catch(e){}
+  var url=reminderUrl(title,dates);
+  openUrl(url);
+  return url;
+}
+function openRem(){ $('#remName').value=remPrefs.name; $('#remModal').hidden=false; }
+function closeRem(){ $('#remModal').hidden=true; }
+function updateBelBtn(){
+  var n=$('#belOcc').querySelectorAll('input:checked').length;
+  $('#belGo').disabled=!n;
+  $('#belGo').textContent=n?('🔔 Créer '+n+' rappel'+(n>1?'s':'')):'Choisis au moins un rappel';
+}
+function renderBelOcc(initial){
+  var box=$('#belOcc'), keep=bel.sel;
+  if(initial){ keep=bel.sel={}; remPrefs.occ.forEach(function(k){keep[k]=1;}); }
+  box.textContent='';
+  var now=Date.now(), tm=$('#belTime').value||'09:00', dl=$('#belDate').value;
+  OCC.forEach(function(o){
+    var d=alertAt(dl,o[0],tm), past=!d||d.getTime()<=now+30000;
+    var cb=h('input',{type:'checkbox',value:String(o[0])});
+    cb.checked=!!keep[o[0]]&&!past; cb.disabled=past;
+    cb.addEventListener('change',function(){ bel.sel[o[0]]=cb.checked?1:0; updateBelBtn(); });
+    var info=d?(JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+pad(d.getHours())+':'+pad(d.getMinutes())+(past?' · déjà passé':'')):'choisis d\'abord une échéance';
+    box.appendChild(h('label',{class:'occ'+(past?' off':'')},cb,h('span',null,o[1],h('small',{text:info}))));
+  });
+  updateBelBtn();
+}
+function openBell(t){
+  bel.task=t;
+  $('#belTitle').textContent=t.title;
+  $('#belDate').value=t.deadline||''; $('#belTime').value=remPrefs.time;
+  renderBelOcc(true);
+  $('#belModal').hidden=false;
+}
+function closeBell(){ $('#belModal').hidden=true; bel.task=null; }
+function confirmBell(){
+  var t=bel.task; if(!t) return;
+  var tm=$('#belTime').value||'09:00', dl=$('#belDate').value, ks=[], dates=[];
+  Array.prototype.forEach.call($('#belOcc').querySelectorAll('input:checked'),function(i){ ks.push(+i.value); });
+  if(!ks.length) return;
+  ks.sort(function(a,b){return b-a;});                       // du plus ancien au plus proche de l'échéance
+  ks.forEach(function(k){ dates.push(fmtAlert(alertAt(dl,k,tm))); });
+  remPrefs.time=tm; remPrefs.occ=ks.map(String); saveRem();
+  remSent[t.id]=Date.now(); saveSent();
+  var title=t.title;
+  closeBell(); renderLists();
+  sendReminder(title,dates);
 }
 
 /* =====================================================================
@@ -1040,8 +1199,10 @@ function withUndo(msg,fn){
   toast(msg,'Annuler',function(){tasks=JSON.parse(snap);saveTasks();render();});
 }
 function addTask(title,deadline){
-  tasks.push({id:uid(),title:title,deadline:deadline||'',created:Date.now(),done:false,doneAt:0,profile:activeId});
+  var t={id:uid(),title:title,deadline:deadline||'',created:Date.now(),done:false,doneAt:0,profile:activeId};
+  tasks.push(t);
   saveTasks(); render();
+  return t;
 }
 function toggleDone(id){
   var t=findTask(id); if(!t) return;
@@ -1129,7 +1290,10 @@ function taskEl(t){
   if(sub.childNodes.length) body.appendChild(sub);
   body.appendChild(h('div',{class:'meta',text:meta}));
   li.appendChild(body);
-  li.appendChild(h('button',{class:'mini del',type:'button','aria-label':'Supprimer',text:'✕',onclick:function(){deleteTask(t.id);}}));
+  var acts=h('div',{class:'acts'});
+  if(!t.done) acts.appendChild(h('button',{class:'mini bell'+(remSent[t.id]?' sent':''),type:'button','aria-label':'Créer un rappel iPhone',title:remSent[t.id]?'Rappel déjà créé : en créer d\'autres':'Créer un rappel iPhone',text:remSent[t.id]?'🔔✓':'🔔',onclick:function(){openBell(t);}}));
+  acts.appendChild(h('button',{class:'mini del',type:'button','aria-label':'Supprimer',text:'✕',onclick:function(){deleteTask(t.id);}}));
+  li.appendChild(acts);
   return li;
 }
 function renderLists(){
@@ -1828,6 +1992,19 @@ window.addEventListener('resize',function(){ if(calState.floating) applyCal(); i
 /* --- export / import --- */
 $('#btnData').addEventListener('click',function(){openModal('all','export');});
 $('#btnProfile').addEventListener('click',openProfiles);
+$('#belSettings').addEventListener('click',openRem);
+$('#remClose').addEventListener('click',closeRem);
+$('#remModal').addEventListener('click',function(e){ if(e.target===$('#remModal')) closeRem(); });
+$('#remName').addEventListener('change',function(){ remPrefs.name=this.value.trim()||'Ajouter rappel'; this.value=remPrefs.name; saveRem(); });
+$('#remTest').addEventListener('click',function(){ sendReminder('Rappel test',[fmtAlert(new Date(Date.now()+120000))]); });
+$('#belClose').addEventListener('click',closeBell);
+$('#belModal').addEventListener('click',function(e){ if(e.target===$('#belModal')) closeBell(); });
+$('#belTime').addEventListener('change',function(){ renderBelOcc(false); });
+$('#belDate').addEventListener('change',function(){
+  if(bel.task){ bel.task.deadline=this.value||''; saveTasks(); render(); }
+  renderBelOcc(false);
+});
+$('#belGo').addEventListener('click',confirmBell);
 $('#pClose').addEventListener('click',closeProfiles);
 $('#profileModal').addEventListener('click',function(e){ if(e.target===$('#profileModal')) closeProfiles(); });
 $('#pForm').addEventListener('submit',function(e){ e.preventDefault(); addProfile($('#pName').value); });
@@ -1864,7 +2041,7 @@ $('#lClose').addEventListener('click',closeLogin);
 $('#loginModal').addEventListener('click',function(e){ if(e.target===$('#loginModal')) closeLogin(); });
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape') return;
-  if(!modal.hidden) closeModal(); else if(!$('#profileModal').hidden) closeProfiles(); else if(!$('#loginModal').hidden) closeLogin();
+  if(!modal.hidden) closeModal(); else if(!$('#remModal').hidden) closeRem(); else if(!$('#belModal').hidden) closeBell(); else if(!$('#profileModal').hidden) closeProfiles(); else if(!$('#loginModal').hidden) closeLogin();
 });
 $('#lForm').addEventListener('submit',function(e){
   e.preventDefault();
@@ -1902,6 +2079,7 @@ window.addEventListener('focus',checkDay);
    DÉMARRAGE
    ===================================================================== */
 stores=[profileStore,todoStore,notesStore];
+loadRem();
 loadProfiles();
 loadTasks();
 loadNotes();
